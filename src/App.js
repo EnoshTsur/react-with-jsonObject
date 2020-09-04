@@ -1,24 +1,55 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+async function fetchData() {
+  const response = await fetch('http://localhost:8080/user/get')
+  return await response.json()
+}
 
 function App() {
+
+  const [user, setUser,] = React.useState(null)
+
+  React.useEffect(() => {
+    fetchData()
+      .then(data => setUser(data))
+      .catch(error => console.log('!! ', error))
+  }, [])
+
+
+  if (!user) {
+    return null
+  }
+
+  
+  const {
+    name, gender, email,
+    picture, streetNumber,
+    streetName, city,
+    country
+  } = user
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{
+      maxWidth: '70%',
+      margin: '0 auto'
+    }}>
+      <div style={{
+        padding: '1rem',
+        textAlign: 'center',
+
+      }}>
+        <img  style={{
+          borderRadius: '7px',
+          boxShadow: '0 3px 5px #d9d9d9'
+        }} src={picture} alt="user-picture"/>
+
+        <h4>{name}</h4>
+        {
+          Object.entries({ gender, email, streetName, streetNumber, city, country})
+        .map(([ k, v]) => (<p key={k}>{`${k}: ${v}`}</p>))
+        }
+
+      </div>
     </div>
   );
 }
